@@ -11,14 +11,14 @@
 
 <AnchorPane prefHeight="500.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.Controller">
    <children>
-      <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="240.0">
+      <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="300.0">
          <children>
-            <Text fx:id="currentValue" fill="#a3a3a3" strokeType="OUTSIDE" strokeWidth="0.0" text="0" textAlignment="RIGHT" textOrigin="CENTER" wrappingWidth="134.13671875">
+            <Text fx:id="currentValue" fill="#a3a3a3" strokeType="OUTSIDE" strokeWidth="0.0" text="0" textAlignment="CENTER" textOrigin="CENTER" wrappingWidth="300.0">
                <font>
                   <Font size="20.0" />
                </font>
             </Text>
-            <Text fx:id="currentText" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="RIGHT" wrappingWidth="159.13671875">
+            <Text fx:id="currentText" strokeType="OUTSIDE" strokeWidth="0.0" textAlignment="CENTER" wrappingWidth="300.0">
                <font>
                   <Font size="30.0" />
                </font>

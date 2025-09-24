@@ -62,13 +62,13 @@ public class Controller {
         String newCurrentText = currentText.getText();
         String[] operationStrings = {"+","-","*","/"};
 
-        // Comprueba si ya hay un operador en el texto
+        // Comprueba si ya hay un operador en currentText
         boolean currentTextContainsOperation = containsCharFromArray(newCurrentText, operationStrings);
         
         // Comprueba si el botón pulsado es de operación
         boolean currentButtonIsOperation = containsCharFromArray(textButton, operationStrings);
 
-        // Si intentamos poner otra operación al texto, lo impide
+        // Si intentamos poner una segunda operación al texto, lo impide
         if (currentTextContainsOperation && currentButtonIsOperation) {
             {}
         } else {

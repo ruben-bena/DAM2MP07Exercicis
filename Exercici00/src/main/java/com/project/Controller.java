@@ -1,11 +1,15 @@
 package com.project;
 
+import java.util.ArrayList;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.text.Text;
 
 public class Controller {
+
+    String[] operationStrings = {"+","-","*","/"};
 
     @FXML
     private Button buttonNumber1;
@@ -53,27 +57,31 @@ public class Controller {
 
     @FXML
     private void fillString(ActionEvent event) {
-        // Obtiene el botón que disparó el evento
+        // Obtiene el botón que disparó el evento y accede a su símbolo
         Button button = (Button) event.getSource();
-
-        // Accede al texto del botón
         String textButton = button.getText();
+        if (textButton.equals("Ans")) {
+            textButton = currentValue.getText();
+        }
 
+        // Añade el contenido del botón a currentText
         String newCurrentText = currentText.getText();
-        String[] operationStrings = {"+","-","*","/"};
+        newCurrentText += textButton;
+        
 
         // Comprueba si ya hay un operador en currentText
-        boolean currentTextContainsOperation = containsCharFromArray(newCurrentText, operationStrings);
+        // String[] operationStrings = {"+","-","*","/"};
+        // boolean currentTextContainsOperation = containsCharFromArray(newCurrentText, operationStrings);
         
-        // Comprueba si el botón pulsado es de operación
-        boolean currentButtonIsOperation = containsCharFromArray(textButton, operationStrings);
+        // // Comprueba si el botón pulsado es de operación
+        // boolean currentButtonIsOperation = containsCharFromArray(textButton, operationStrings);
 
         // Si intentamos poner una segunda operación al texto, lo impide
-        if (currentTextContainsOperation && currentButtonIsOperation) {
-            {}
-        } else {
-            newCurrentText += textButton;
-        }
+        // if (currentTextContainsOperation && currentButtonIsOperation) {
+        //     {}
+        // } else {
+        //     newCurrentText += textButton;
+        // }
 
         currentText.setText(newCurrentText);
     }
@@ -103,7 +111,20 @@ public class Controller {
     private void deleteCurrentTextLastChar() {
         String text = currentText.getText();
         if (text.length() > 0) {
-            String newCurrentText = text.substring(0, text.length() - 1);
+
+            // Comprobar si lo último escrito en la calculadora es "Ans"
+            String lastChar = String.valueOf(text.charAt(text.length() - 1));
+            boolean lastWrittenIsAns = lastChar.equals("s");
+            String newCurrentText;
+
+            if (lastWrittenIsAns) {
+                newCurrentText = text.substring(0, text.length() - 3);
+
+            } else {
+                newCurrentText = text.substring(0, text.length() - 1);
+
+            }
+
             currentText.setText(newCurrentText);
         }
     }
@@ -111,13 +132,13 @@ public class Controller {
     @FXML
     private void calculateValue() {
         // Comprueba si puede hacer operación
-        boolean isOperationValid = checkIfOperationIsValid(currentText.getText());
-        if (!isOperationValid) {
-            return;
-        }
+        // boolean isOperationValid = checkIfOperationIsValid(currentText.getText());
+        // if (!isOperationValid) {
+        //     return;
+        // }
 
         // Separa el texto en partes
-        String[] parts = preparateParts(currentText.getText());
+        ArrayList<String> parts = preparateParts(currentText.getText());
 
         // Calcula valor de la operación
         double value = valueOfOperation(parts);
@@ -163,52 +184,67 @@ public class Controller {
         return true;
     }
 
-    private String[] preparateParts(String text) {
-        String[] operationStrings = {"+","-","*","/"};
-        String[] parts = new String[3];
+    private ArrayList<String> preparateParts(String text) {
+        ArrayList<String> parts = new ArrayList<>();
+        String currentElement = "";
 
-        // Buscamos operador y asignamos los miembros a parts
-        for (int i=0; i<text.length(); i++) {
-            char c = text.charAt(i);
-            String current = String.valueOf(c);
+        for (int i = 0; i < text.length(); i++) {
+            String currentChar = String.valueOf(text.charAt(i));
 
-            for (String op : operationStrings) {
-                if (op.equals(current)) {
-                    
-                    // Operador encontrado --> asignamos miembros
-                    parts[0] = text.substring(0, i);
-                    parts[1] = current;
-                    parts[2] = text.substring(i+1);
-
-                    return parts;
+            if (containsCharFromArray(currentChar, operationStrings)) {
+                if (!currentElement.isEmpty()) {
+                    parts.add(currentElement);
+                    currentElement = "";
                 }
+                parts.add(currentChar);
+            } else {
+                currentElement += currentChar;
             }
         }
 
-        return parts;
+        if (!currentElement.isEmpty()) {
+            parts.add(currentElement);
+        }
+
+    return parts;
+}
+
+    private double valueOfOperation(ArrayList<String> parts) {
+        // Primer recorrido (multiplicación y división)
+        ArrayList<String> partsAfterFirstRound = new ArrayList<>();
+        int i = 0;
+        while (i < parts.size()) {
+            String part = parts.get(i);
+
+            if (part.equals("*") || part.equals("/")) {
+                double left = Double.parseDouble(partsAfterFirstRound.remove(partsAfterFirstRound.size() - 1));
+                double right = Double.parseDouble(parts.get(i + 1));
+                double result;
+                if (part.equals("*")) {
+                    result = left * right;
+
+                } else {
+                    result = left / right;
+
+                }
+                partsAfterFirstRound.add(String.valueOf(result));
+                i += 2; // Saltamos el siguiente número porque ya lo procesamos
+            } else {
+                partsAfterFirstRound.add(part);
+                i++;
+            }
     }
 
-    private double valueOfOperation(String[] parts) {
-        // Recopilar valores
-        double firstNumber = Double.parseDouble(parts[0]);
-        String operation = parts[1];
-        double secondNumber = Double.parseDouble(parts[2]);
-
-        // Hacer operación
-        double result = 0;
-        switch (operation) {
-            case "+":
-            result = firstNumber + secondNumber;
-            break;
-            case "-":
-            result = firstNumber - secondNumber;
-            break;
-            case "*":
-            result = firstNumber * secondNumber;
-            break;
-            case "/":
-            result = firstNumber / secondNumber;
-            break;
+        // Recorrido final (suma y resta)
+        double result = Double.parseDouble(partsAfterFirstRound.get(0));
+        for (i = 1; i < partsAfterFirstRound.size(); i += 2) {
+            String operator = partsAfterFirstRound.get(i);
+            double number = Double.parseDouble(partsAfterFirstRound.get(i + 1));
+            if (operator.equals("+")) {
+                result += number;
+            } else if (operator.equals("-")) {
+                result -= number;
+            }
         }
 
         return result;

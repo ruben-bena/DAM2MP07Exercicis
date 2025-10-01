@@ -40,7 +40,7 @@
                         </ScrollPane>
                      </children>
                   </VBox>
-                  <VBox fx:id="mainScreen" alignment="CENTER" spacing="10" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS" >
+                  <VBox fx:id="mainScreen" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10" HBox.hgrow="ALWAYS">
                      <padding>
                         <Insets top="20" right="20" bottom="20" left="20"/>
                      </padding>

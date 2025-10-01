@@ -66,7 +66,7 @@ public class ControllerDesktop {
             jsonInfoGames = new JSONArray(content);
 
             // Actualiza la UI con los valores iniciales de los personajes
-            setCharacters(null);
+            setCharacters();
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -75,7 +75,7 @@ public class ControllerDesktop {
     }
 
     @FXML
-    private void setCharacters(ActionEvent event) throws Exception {
+    private void setCharacters() throws Exception {
         // Borrar contenido listView
         yPane.getChildren().clear();
 
@@ -90,7 +90,7 @@ public class ControllerDesktop {
             // Carregar el template de 'listItem.fxml'
             FXMLLoader loader = new FXMLLoader(resource);
             Parent itemTemplate = loader.load();
-            ControllerListItemDesktop itemController = loader.getController();
+            ControllerListItem itemController = loader.getController();
 
             // Asignar los valores a los controles del template
             itemController.setLableName(name);
@@ -114,7 +114,7 @@ public class ControllerDesktop {
     }
 
     @FXML
-    private void setConsoles(ActionEvent event) throws Exception {
+    private void setConsoles() throws Exception {
         // Borrar contenido listView
         yPane.getChildren().clear();
 
@@ -129,7 +129,7 @@ public class ControllerDesktop {
             // Carregar el template de 'listItem.fxml'
             FXMLLoader loader = new FXMLLoader(resource);
             Parent itemTemplate = loader.load();
-            ControllerListItemDesktop itemController = loader.getController();
+            ControllerListItem itemController = loader.getController();
 
             // Asignar los valores a los controles del template
             itemController.setLableName(name);
@@ -157,7 +157,7 @@ public class ControllerDesktop {
     }
 
     @FXML
-    private void setGames(ActionEvent event) throws Exception {
+    private void setGames() throws Exception {
         // Borrar contenido listView
         yPane.getChildren().clear();
 
@@ -172,7 +172,7 @@ public class ControllerDesktop {
             // Carregar el template de 'listItem.fxml'
             FXMLLoader loader = new FXMLLoader(resource);
             Parent itemTemplate = loader.load();
-            ControllerListItemDesktop itemController = loader.getController();
+            ControllerListItem itemController = loader.getController();
 
             // Asignar los valores a los controles del template
             itemController.setLableName(name);
@@ -202,7 +202,7 @@ public class ControllerDesktop {
             // Añadir listener para que al hacer click se actualice la pantalla central
             itemTemplate.setOnMouseClicked(e -> {
                 updateMainScreen(game, urlImage);
-            });        
+            });
         }
     }
 
@@ -211,13 +211,13 @@ public class ControllerDesktop {
         try {
             switch (option) {
                 case "Characters":
-                    setCharacters(null);
+                    setCharacters();
                     break;
                 case "Consoles":
-                    setConsoles(null);
+                    setConsoles();
                     break;
                 case "Games":
-                    setGames(null);
+                    setGames();
                     break;
                 }
         } catch (Exception e) {

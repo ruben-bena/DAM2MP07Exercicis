@@ -5,50 +5,27 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Objects;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Circle;
-import javafx.scene.text.TextAlignment;
 
-public class ControllerDesktop {
+public class ControllerMobile1 {
 
     @FXML
-    private AnchorPane rootPaneDesktop;
-    @FXML
-    private ComboBox<String> comboBox;
+    private AnchorPane rootPaneMobile1;
     @FXML
     private VBox yPane;
-    @FXML
-    private Circle circle;
-    @FXML
-    private VBox mainScreen;
     private JSONArray jsonInfoCharacters, jsonInfoConsoles, jsonInfoGames;
     private URL resource = this.getClass().getResource("/assets/listItem.fxml");
 
     public void initialize() {
         try {
-            // Añade los valores del ComboBox
-            comboBox.getItems().addAll("Characters", "Consoles", "Games");
-            comboBox.getSelectionModel().selectFirst();
-
-            // Listener del ComboBox
-            comboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                evaluateComboBoxOption(newValue);
-            });
-
             // Obtener lista Characters
             URL jsonCharactersFileURL = getClass().getResource("/assets/characters.json");
             Path path = Paths.get(jsonCharactersFileURL.toURI());
@@ -67,27 +44,21 @@ public class ControllerDesktop {
             content = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
             jsonInfoGames = new JSONArray(content);
 
-            // Actualiza la UI con los valores iniciales de los personajes
-            setCharacters();
-
-            // Listener para cambiar de vista según tamaño ventana
-            rootPaneDesktop.widthProperty().addListener((obs, oldVal, newVal) -> {
-                //System.out.println("rootPaneDesktop.widthProperty=" + newVal);
-                if ((double) newVal < 610) {
-                    //System.out.println("SE ACTIVA LISTENER EN VISTA viewDesktop");
-                    UtilsViews.setView("viewMobile0");   
+            // Listener tamaño ventana
+            rootPaneMobile1.widthProperty().addListener((obs, oldVal, newVal) -> {
+                //System.out.println("rootPaneMobile1.widthProperty=" + newVal);
+                if ((double) newVal > 800) {
+                    //System.out.println("SE ACTIVA LISTENER EN VISTA viewMobile1");
+                    UtilsViews.setView("viewDesktop");
                 }
             });
-
         } catch (Exception e) {
             e.printStackTrace();
-
         }
-
     }
 
     @FXML
-    private void setCharacters() throws Exception {
+    public void setCharacters() throws Exception {
         // Borrar contenido listView
         yPane.getChildren().clear();
 
@@ -113,20 +84,25 @@ public class ControllerDesktop {
             }
 
             String urlImage = "/assets/images/character_" + name.toLowerCase() + ".png";
-            itemController.setImatge("/assets/images/character_" + name.toLowerCase() + ".png");
+            itemController.setImatge(urlImage);
 
             // Añadir el nuevo elemento a 'yPane'
             yPane.getChildren().add(itemTemplate);
 
             // Añadir listener para que al hacer click se actualice la pantalla central
             itemTemplate.setOnMouseClicked(e -> {
-                updateMainScreen(character, urlImage);
+                // Preparar siguiente vista
+                ControllerMobile2 controllerMobile2 = (ControllerMobile2) UtilsViews.getController("viewMobile2");
+                controllerMobile2.updateMainScreen(character, urlImage);
+
+                // Cambiar a la siguiente vista
+                UtilsViews.setView("viewMobile2");
             });
         }
     }
 
     @FXML
-    private void setConsoles() throws Exception {
+    public void setConsoles() throws Exception {
         // Borrar contenido listView
         yPane.getChildren().clear();
 
@@ -163,13 +139,18 @@ public class ControllerDesktop {
 
             // Añadir listener para que al hacer click se actualice la pantalla central
             itemTemplate.setOnMouseClicked(e -> {
-                updateMainScreen(console, urlImage);
+                // Preparar siguiente vista
+                ControllerMobile2 controllerMobile2 = (ControllerMobile2) UtilsViews.getController("viewMobile2");
+                controllerMobile2.updateMainScreen(console, urlImage);
+
+                // Cambiar a la siguiente vista
+                UtilsViews.setView("viewMobile2");
             });
         }
     }
 
     @FXML
-    private void setGames() throws Exception {
+    public void setGames() throws Exception {
         // Borrar contenido listView
         yPane.getChildren().clear();
 
@@ -213,113 +194,19 @@ public class ControllerDesktop {
 
             // Añadir listener para que al hacer click se actualice la pantalla central
             itemTemplate.setOnMouseClicked(e -> {
-                updateMainScreen(game, urlImage);
+                System.out.println("holi");
+                // Preparar siguiente vista
+                ControllerMobile2 controllerMobile2 = (ControllerMobile2) UtilsViews.getController("viewMobile2");
+                controllerMobile2.updateMainScreen(game, urlImage);
+
+                // Cambiar a la siguiente vista
+                UtilsViews.setView("viewMobile2");
             });
         }
     }
 
     @FXML
-    private void evaluateComboBoxOption(String option) {
-        try {
-            switch (option) {
-                case "Characters":
-                    setCharacters();
-                    break;
-                case "Consoles":
-                    setConsoles();
-                    break;
-                case "Games":
-                    setGames();
-                    break;
-                }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    private void updateMainScreen(JSONObject jsonObject, String urlImage) {
-        // Limpiar elementos de mainScreen
-        mainScreen.getChildren().clear();
-
-        // Preparar imagen
-        try {
-            Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(urlImage)));
-            ImageView imageView = new ImageView(image);
-            imageView.setFitWidth(200);
-            imageView.setPreserveRatio(true);
-
-            mainScreen.getChildren().add(imageView);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-
-        boolean isCharacter = jsonObject.has("game");
-        boolean isConsole = jsonObject.has("procesador");
-        boolean isGame = jsonObject.has("plot");
-
-        // Nombre
-        Label name = new Label(jsonObject.getString("name"));
-        name.setStyle("-fx-font-size: 30px; -fx-fill: black; -fx-font-weight: bold;");
-        mainScreen.getChildren().add(name);
-
-        // Game
-        if (isCharacter) {
-            Label game = new Label(jsonObject.getString("game"));
-            game.setStyle("-fx-font-size: 20px;");
-            mainScreen.getChildren().add(game);
-        }
-
-        // Date
-        if (isConsole) {
-            Label date = new Label(jsonObject.getString("date"));
-            date.setStyle("-fx-font-size: 20px;");
-            mainScreen.getChildren().add(date);
-        }
-
-        // Procesador
-        if (isConsole) {
-            Label procesador = new Label(jsonObject.getString("procesador"));
-            procesador.setStyle("-fx-font-size: 20px;");
-            mainScreen.getChildren().add(procesador);
-        }
-
-        // Units sold
-        if (isConsole) {
-            Label unitsSold = new Label(String.valueOf(jsonObject.getInt("units_sold")));
-            unitsSold.setStyle("-fx-font-size: 20px;");
-            mainScreen.getChildren().add(unitsSold);
-        }
-
-        // Year
-        if (isGame) {
-            Label year = new Label(String.valueOf(jsonObject.getInt("year")));
-            year.setStyle("-fx-font-size: 20px;");
-            mainScreen.getChildren().add(year);
-        }
-
-        // Type
-        if (isGame) {
-            Label type = new Label(jsonObject.getString("type"));
-            type.setStyle("-fx-font-size: 20px;");
-            mainScreen.getChildren().add(type);
-        }
-
-        // Plot
-        if (isGame) {
-            Label plot = new Label(jsonObject.getString("plot"));
-            plot.setStyle("-fx-font-size: 15px;");
-            plot.setWrapText(true);
-            plot.setAlignment(Pos.CENTER);
-            plot.setTextAlignment(TextAlignment.CENTER);
-            mainScreen.getChildren().add(plot);
-        }
-
-        // Color
-        if (isCharacter || isConsole) {
-            circle = new Circle(20);
-            circle.setStyle("-fx-fill: " + jsonObject.getString("color"));
-            mainScreen.getChildren().add(circle);
-        }
+    private void toViewMobile0() {
+        UtilsViews.setView("viewMobile0");
     }
 }

@@ -9,13 +9,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefWidth="1000.0" prefHeight="700.0" style="-fx-background-color: F6DED8;" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.ControllerDesktop">
+<AnchorPane fx:id="rootPaneDesktop" prefHeight="700.0" prefWidth="1000.0" style="-fx-background-color: F6DED8;" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.ControllerDesktop">
    <children>
       <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <StackPane minHeight="30" prefHeight="30" maxHeight="30" style="-fx-background-color: B82132;">
+            <StackPane maxHeight="30" minHeight="30" prefHeight="30" style="-fx-background-color: B82132;">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Nintendo DB" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Nintendo DB" />
                </children>
             </StackPane>
             <HBox VBox.vgrow="ALWAYS">
@@ -42,7 +42,7 @@
                   </VBox>
                   <VBox fx:id="mainScreen" alignment="CENTER" spacing="10" HBox.hgrow="ALWAYS">
                      <padding>
-                        <Insets top="20" right="20" bottom="20" left="20"/>
+                        <Insets bottom="20" left="20" right="20" top="20" />
                      </padding>
                   </VBox>
                </children>

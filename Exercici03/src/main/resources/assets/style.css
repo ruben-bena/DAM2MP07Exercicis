@@ -1,0 +1,40 @@
+/* Barra de input (HBox que contiene TextField + botones) */
+.input-bar {
+    -fx-background-color: #f7f7f8;  /* color de fondo suave */
+    -fx-padding: 8;
+    -fx-spacing: 8;
+    -fx-alignment: center-left;
+    -fx-border-color: #e0e0e0;     /* línea superior */
+    -fx-border-width: 1 0 0 0;     /* solo arriba */
+}
+
+/* TextField estilo chat */
+.text-field {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: #d1d1d1;
+    -fx-border-width: 1;
+    -fx-padding: 6 12 6 12;
+    -fx-font-size: 14px;
+}
+
+/* Botones icono */
+.icon-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 5;
+    -fx-cursor: hand;              /* cambio de cursor al pasar */
+}
+
+.icon-button:hover {
+    -fx-background-color: #e0e0e0; /* efecto hover ligero */
+    -fx-background-radius: 50;
+}
+
+/* ImageView dentro del botón */
+.icon-button ImageView {
+    -fx-fit-width: 20;
+    -fx-fit-height: 20;
+    -fx-preserve-ratio: true;
+}

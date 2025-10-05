@@ -14,15 +14,12 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
 
         UtilsViews.parentContainer.setStyle("-fx-font: 14 arial;");
-        UtilsViews.addView(getClass(), "viewDesktop", "/assets/viewDesktop.fxml");
-        UtilsViews.addView(getClass(), "viewMobile0", "/assets/viewMobile0.fxml");
-        UtilsViews.addView(getClass(), "viewMobile1", "/assets/viewMobile1.fxml");
-        UtilsViews.addView(getClass(), "viewMobile2", "/assets/viewMobile2.fxml");
+        UtilsViews.addView(getClass(), "mainView", "/assets/layout.fxml");
 
         Scene scene = new Scene(UtilsViews.parentContainer);
 
         stage.setScene(scene);
-        stage.setTitle("Exercici02");
+        stage.setTitle("Exercici03 - IETI Chat");
         stage.setMinWidth(WINDOW_WIDTH);
         stage.setMinHeight(WINDOW_HEIGHT);
         

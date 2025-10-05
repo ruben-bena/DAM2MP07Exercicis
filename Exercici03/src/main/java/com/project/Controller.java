@@ -30,6 +30,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.stage.FileChooser;
 
 public class Controller implements Initializable {
@@ -58,6 +59,10 @@ public class Controller implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         setButtonsIdle();
         resetImageAttributes();
+
+        textFieldPrompt.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {buttonSendRequest.fire();}
+        });
     }
 
     // --- UI actions ---

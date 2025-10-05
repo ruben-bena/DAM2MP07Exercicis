@@ -28,7 +28,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.text.Text;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 
 public class Controller implements Initializable {
@@ -37,8 +38,12 @@ public class Controller implements Initializable {
     private static final String TEXT_MODEL   = "gemma3:1b";
     private static final String VISION_MODEL = "llava-phi3";
 
-    @FXML private Button buttonCallStream, buttonBreak, buttonPicture;
-    @FXML private Text textInfo;
+    @FXML private Button buttonSendRequest, buttonBreak, buttonPicture;
+    @FXML private Label textInfo;
+    @FXML private TextField textFieldPrompt;
+
+    private boolean imageLoaded;
+    private String base64Image;
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private CompletableFuture<HttpResponse<InputStream>> streamRequest;
@@ -52,6 +57,7 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         setButtonsIdle();
+        resetImageAttributes();
     }
 
     // --- UI actions ---
@@ -62,12 +68,13 @@ public class Controller implements Initializable {
         setButtonsRunning();
         isCancelled.set(false);
 
+
         ensureModelLoaded(TEXT_MODEL).whenComplete((v, err) -> {
             if (err != null) {
                 Platform.runLater(() -> { textInfo.setText("Error loading model."); setButtonsIdle(); });
                 return;
             }
-            executeTextRequest(TEXT_MODEL, "Why is the sky blue?", true);
+            executeTextRequest(TEXT_MODEL, getPrompt(), true);
         });
     }
 
@@ -77,43 +84,13 @@ public class Controller implements Initializable {
         setButtonsRunning();
         isCancelled.set(false);
 
-        // Choose image file
-        FileChooser fc = new FileChooser();
-        fc.setTitle("Choose an image");
-        fc.getExtensionFilters().addAll(
-            new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.webp", "*.bmp", "*.gif")
-        );
-
-        // set default dir to current working directory
-        File initialDir = new File(System.getProperty("user.dir"));
-        if (initialDir.exists() && initialDir.isDirectory()) {
-            fc.setInitialDirectory(initialDir);
-        }
-
-        File file = fc.showOpenDialog(buttonPicture.getScene().getWindow());
-        if (file == null) {
-            Platform.runLater(() -> { textInfo.setText("No file selected."); setButtonsIdle(); });
-            return;
-        }
-
-
-        // Read file -> base64
-        final String base64Image;
-        try {
-            byte[] bytes = Files.readAllBytes(file.toPath());
-            base64Image = Base64.getEncoder().encodeToString(bytes);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Platform.runLater(() -> { textInfo.setText("Error reading image."); setButtonsIdle(); });
-            return;
-        }
-
         ensureModelLoaded(VISION_MODEL).whenComplete((v, err) -> {
             if (err != null) {
                 Platform.runLater(() -> { textInfo.setText("Error loading model."); setButtonsIdle(); });
                 return;
             }
-            executeImageRequest(VISION_MODEL, "Describe what's in this picture", base64Image);
+            executeImageRequest(VISION_MODEL, getPrompt(), base64Image);
+            resetImageAttributes();
         });
     }
 
@@ -125,6 +102,7 @@ public class Controller implements Initializable {
         Platform.runLater(() -> {
             textInfo.setText("Request cancelled.");
             setButtonsIdle();
+            resetImageAttributes();
         });
     }
 
@@ -179,7 +157,7 @@ public class Controller implements Initializable {
 
     // Image + prompt (non-stream) using vision model
     private void executeImageRequest(String model, String prompt, String base64Image) {
-        Platform.runLater(() -> textInfo.setText("Analyzing picture ..."));
+        Platform.runLater(() -> textInfo.setText("Thinking..."));
 
         JSONObject body = new JSONObject()
             .put("model", model)
@@ -297,13 +275,13 @@ public class Controller implements Initializable {
     }
 
     private void setButtonsRunning() {
-        buttonCallStream.setDisable(true);
+        buttonSendRequest.setDisable(true);
         buttonPicture.setDisable(true);
         buttonBreak.setDisable(false);
     }
 
     private void setButtonsIdle() {
-        buttonCallStream.setDisable(false);
+        buttonSendRequest.setDisable(false);
         buttonPicture.setDisable(false);
         buttonBreak.setDisable(true);
         streamRequest = null;
@@ -352,5 +330,55 @@ public class Controller implements Initializable {
                 return httpClient.sendAsync(preloadReq, HttpResponse.BodyHandlers.ofString())
                         .thenAccept(r -> { /* warmed */ });
             });
+    }
+
+    @FXML
+    private String getPrompt() {
+        return textFieldPrompt.getText();
+    }
+
+    @FXML
+    private void loadImage() {
+        // Choose image file
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Choose an image");
+        fc.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.webp", "*.bmp", "*.gif")
+        );
+
+        // set default dir to current working directory
+        File initialDir = new File(System.getProperty("user.dir"));
+        if (initialDir.exists() && initialDir.isDirectory()) {
+            fc.setInitialDirectory(initialDir);
+        }
+
+        File file = fc.showOpenDialog(buttonPicture.getScene().getWindow());
+        if (file == null) {
+            Platform.runLater(() -> { textInfo.setText("No file selected."); setButtonsIdle(); });
+            return;
+        }
+
+
+        // Read file -> base64
+        try {
+            byte[] bytes = Files.readAllBytes(file.toPath());
+            base64Image = Base64.getEncoder().encodeToString(bytes);
+            imageLoaded = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            Platform.runLater(() -> { textInfo.setText("Error reading image."); setButtonsIdle(); });
+            return;
+        }
+    }
+
+    private void resetImageAttributes() {
+        imageLoaded = false;
+        base64Image = null;
+    }
+
+    @FXML
+    private void sendRequest(ActionEvent event) {
+        if (imageLoaded) {callPicture(event);}
+        else {callStream(event);}
     }
 }

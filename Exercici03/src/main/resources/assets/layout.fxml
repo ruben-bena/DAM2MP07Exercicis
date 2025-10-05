@@ -7,22 +7,26 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-
+<?import javafx.scene.text.Text?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.Controller">
    <children>
       <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <ScrollPane VBox.vgrow="ALWAYS" />
+            <ScrollPane VBox.vgrow="ALWAYS">
+               <content>
+                  <Text fx:id="textInfo" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+               </content></ScrollPane>
             <HBox>
                <children>
-                  <Button mnemonicParsing="false" text="Abrir imagen" />
+                  <Button fx:id="buttonPicture" mnemonicParsing="false" onAction="#callPicture" text="Abrir imagen" />
                   <TextField HBox.hgrow="ALWAYS">
                      <HBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </HBox.margin>
                   </TextField>
-                  <Button mnemonicParsing="false" text="Enviar" />
+                  <Button fx:id="buttonCallStream" mnemonicParsing="false" onAction="#callStream" text="Enviar" />
+                  <Button fx:id="buttonBreak" mnemonicParsing="false" onAction="#callBreak" text="Button" />
                </children>
                <VBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
